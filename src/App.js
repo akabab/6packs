@@ -25,9 +25,12 @@ class App extends Component {
   handleSubmit = e => {
     e.preventDefault()
 
-    const value = this.state.inputValue
+    const todo = {
+      value: this.state.inputValue,
+      quantity: 1
+    }
 
-    db.collection('todos').doc(value).set({ value, quantity: 1 })
+    db.collection('todos').doc(todo.value).set(todo)
   }
 
   handleChange = e => {
@@ -35,6 +38,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // update state when 'todos' collection changes
     this.unsubscribe = db.collection('todos')
       .onSnapshot(snapshot => {
         const todos = []
@@ -51,6 +55,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <h2>shopping list</h2>
         <form onSubmit={this.handleSubmit}>
           <input type="text" value={this.state.inputValue} onChange={this.handleChange} />
           <input type="submit" value="add" />
