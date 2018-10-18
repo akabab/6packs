@@ -64,7 +64,10 @@ class App extends Component {
           { this.state.todos.map((todo, i) =>
             <ul key={i}>
               <li>
-                <span>({todo.quantity}) {todo.value} </span>
+                <button onClick={e => db.collection('todos').doc(todo.value).update({ quantity: todo.quantity - 1 })}>-</button>
+                <span>( {todo.quantity} )</span>
+                <button onClick={e => db.collection('todos').doc(todo.value).update({ quantity: todo.quantity + 1 })}>+</button>
+                <span> {todo.value} </span>
                 <button onClick={e => db.collection('todos').doc(todo.value).delete()}>x</button>
               </li>
             </ul>) }
