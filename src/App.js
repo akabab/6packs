@@ -3,12 +3,15 @@ import React, { Component } from 'react'
 import firebase from 'firebase/app'
 import 'firebase/firestore'
 
+const apiKey = process.env.REACT_APP_API_KEY || "AIzaSyA0d-9Xa0sIbn75OdH8EfKg2m_RxSVJORg"
+const projectId = process.env.REACT_APP_PROJECT_ID || "todos-c769e"
+
 const config = {
-  apiKey: "AIzaSyA0d-9Xa0sIbn75OdH8EfKg2m_RxSVJORg",
-  projectId: "todos-c769e",
-  authDomain: "todos-c769e.firebaseapp.com",
-  databaseURL: "https://todos-c769e.firebaseio.com",
-  storageBucket: "todos-c769e.appspot.com",
+  apiKey: apiKey,
+  projectId: `${projectId}`,
+  authDomain: `${projectId}.firebaseapp.com`,
+  databaseURL: `https://${projectId}.firebaseio.com`,
+  storageBucket: `${projectId}.appspot.com`,
 }
 firebase.initializeApp(config)
 
