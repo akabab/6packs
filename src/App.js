@@ -1,22 +1,5 @@
 import React, { Component } from 'react'
-
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-
-const apiKey = process.env.REACT_APP_API_KEY || "AIzaSyA0d-9Xa0sIbn75OdH8EfKg2m_RxSVJORg"
-const projectId = process.env.REACT_APP_PROJECT_ID || "todos-c769e"
-
-const config = {
-  apiKey: apiKey,
-  projectId: `${projectId}`,
-  authDomain: `${projectId}.firebaseapp.com`,
-  databaseURL: `https://${projectId}.firebaseio.com`,
-  storageBucket: `${projectId}.appspot.com`,
-}
-firebase.initializeApp(config)
-
-const db = firebase.firestore()
-db.settings({ timestampsInSnapshots: true })
+import { db } from './firebase'
 
 class App extends Component {
 
