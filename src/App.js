@@ -50,7 +50,8 @@ class App extends Component {
           <input type="text" value={this.state.inputValue} onChange={this.handleChange} />
           <input type="submit" value="add" />
         </form>
-        <button onClick={() => db.deleteItems(items)}>clear</button>
+        <button onClick={() => db.deleteItems(items.filter(i => i.archived))}>clear dones</button>
+        <button onClick={() => db.deleteItems(items)}>clear all</button>
         <div>
           <ul>{ items.map(item => <Item key={item.id} item={item} />) }</ul>
         </div>
