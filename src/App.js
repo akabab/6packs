@@ -1,22 +1,30 @@
 import React, { Component } from 'react'
-import { db } from './firebase'
+import * as db from './db'
+import './App.css'
+
+const listId = window.location.pathname.split('/')[1] || '_'
+const list = db.getList(listId)
+
+const Item = ({ item }) =>
+  <li>
+    <button onClick={e => db.updateItem(item, { quantity: item.quantity - 1 })}>-</button>
+    <span>( {item.quantity} )</span>
+    <button onClick={e => db.updateItem(item, { quantity: item.quantity + 1 })}>+</button>
+    <span className={item.archived ? 'line' : ''} onClick={e => db.updateItem(item, { archived: !item.archived })}> {item.value} </span>
+    <button onClick={e => db.deleteItem(item)}>x</button>
+  </li>
 
 class App extends Component {
 
   state = {
     inputValue: '',
-    todos: []
+    items: []
   }
 
   handleSubmit = e => {
     e.preventDefault()
 
-    const todo = {
-      value: this.state.inputValue,
-      quantity: 1
-    }
-
-    db.collection('todos').doc(todo.value).set(todo)
+    db.addItem(list, this.state.inputValue)
   }
 
   handleChange = e => {
@@ -24,14 +32,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // update state when 'todos' collection changes
-    this.unsubscribe = db.collection('todos')
-      .onSnapshot(snapshot => {
-        const todos = []
-        snapshot.forEach(doc => todos.push(doc.data()))
-
-        this.setState({ todos })
-      })
+    // update state when 'items' collection changes
+    this.unsubscribe = db.onListUpdate(list, items => this.setState({ items }))
   }
 
   componentWillUnmount() {
@@ -39,24 +41,18 @@ class App extends Component {
   }
 
   render() {
+    const items = this.state.items.sort((a, b) => a.value.localeCompare(b.value))
+
     return (
       <div className="App">
-        <h2>shopping list</h2>
+        <h2>Shopping list "{listId}"</h2>
         <form onSubmit={this.handleSubmit}>
           <input type="text" value={this.state.inputValue} onChange={this.handleChange} />
           <input type="submit" value="add" />
         </form>
+        <button onClick={() => db.deleteItems(items)}>clear</button>
         <div>
-          { this.state.todos.map((todo, i) =>
-            <ul key={i}>
-              <li>
-                <button onClick={e => db.collection('todos').doc(todo.value).update({ quantity: todo.quantity - 1 })}>-</button>
-                <span>( {todo.quantity} )</span>
-                <button onClick={e => db.collection('todos').doc(todo.value).update({ quantity: todo.quantity + 1 })}>+</button>
-                <span> {todo.value} </span>
-                <button onClick={e => db.collection('todos').doc(todo.value).delete()}>x</button>
-              </li>
-            </ul>) }
+          <ul>{ items.map(item => <Item key={item.id} item={item} />) }</ul>
         </div>
       </div>
     )
