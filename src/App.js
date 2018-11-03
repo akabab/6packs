@@ -7,6 +7,12 @@ const list = db.getList(listId)
 
 const Item = ({ item }) =>
   <li>
+    <span>( {item.quantity} )</span>
+    <span className={item.archived ? 'line' : ''} onClick={e => db.updateItem(item, { archived: !item.archived })}> {item.value} </span>
+  </li>
+
+Item.Edit = ({ item }) =>
+  <li>
     <button onClick={e => db.updateItem(item, { quantity: item.quantity - 1 })}>-</button>
     <span>( {item.quantity} )</span>
     <button onClick={e => db.updateItem(item, { quantity: item.quantity + 1 })}>+</button>
@@ -18,7 +24,12 @@ class App extends Component {
 
   state = {
     inputValue: '',
-    items: []
+    items: [],
+    isModeEdition: true
+  }
+
+  toggleMode = () => {
+    this.setState({ isModeEdition: !this.state.isModeEdition })
   }
 
   handleSubmit = e => {
@@ -41,7 +52,8 @@ class App extends Component {
   }
 
   render() {
-    const items = this.state.items.sort((a, b) => a.value.localeCompare(b.value))
+    const items = this.state.items
+      // .sort((a, b) => a.value.localeCompare(b.value))
 
     return (
       <div className="App">
@@ -52,9 +64,14 @@ class App extends Component {
         </form>
         <button onClick={() => db.deleteItems(items.filter(i => i.archived))}>clear dones</button>
         <button onClick={() => db.deleteItems(items)}>clear all</button>
-        <div>
-          <ul>{ items.map(item => <Item key={item.id} item={item} />) }</ul>
-        </div>
+        <button onClick={this.toggleMode}>Mode: {this.state.isModeEdition ? 'EDIT' : 'READ' }</button>
+        <ul>
+          { items.map(item => this.state.isModeEdition
+              ? <Item.Edit key={item.id} item={item} />
+              : <Item key={item.id} item={item} />
+            )
+          }
+        </ul>
       </div>
     )
   }
